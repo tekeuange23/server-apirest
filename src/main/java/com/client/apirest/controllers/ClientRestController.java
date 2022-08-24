@@ -32,7 +32,7 @@ public class ClientRestController {
 		return this.clientService.findAll();
 	}
 	
-	@GetMapping("/clients/{idNumber}")
+	@GetMapping("/clients/id/{idNumber}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<?> showByIdNumber(@PathVariable Long idNumber) {
 

@@ -18,7 +18,7 @@ import com.client.apirest.model.entity.Client;
 class RangerClientProjectApplicationTests {
 
 	@Autowired
-	ClientCollection clientService;
+	ClientCollection clientService = new ClientCollection();
 
 	@Test
 	void contextLoads() {
@@ -27,50 +27,33 @@ class RangerClientProjectApplicationTests {
 	@Test
 	public void testCreate() {
 		Client client = new Client();
-		client.setIdNumber((long) 12);
+		client.setIdNumber(Long.parseLong("2001014800086"));
 		client.setFirstName("Tekeu");
 		client.setLastName("Ange");
 		client.setMobileNumber("0000000000");
 		client.setPhysicalAddress("WORLD DEVE");
 		
-		// Save a client
-		Client savedClient = null;
 		try {
-			savedClient = this.clientService.save(client);
+			this.clientService.save(client);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		// Getting the client
-		assertNotNull(this.clientService.findByIdNumber(savedClient.getIdNumber()));
-		assertNotNull(this.clientService.findByMobileNumber(savedClient.getMobileNumber()));
-		assertNotNull(this.clientService.findByFirstName(savedClient.getFirstName()));
-		assertNotEquals(this.clientService.findByFirstName(savedClient.getFirstName()), new ArrayList<Client>());
+		assertNotNull(this.clientService.findByIdNumber(client.getIdNumber()));
+		assertNotNull(this.clientService.findByMobileNumber(client.getMobileNumber()));
+		assertNotNull(this.clientService.findByFirstName(client.getFirstName()));
+		assertNotEquals(this.clientService.findByFirstName(client.getFirstName()), new ArrayList<Client>());
 
 		assertThat(this.clientService.getClientList().values()).size().isGreaterThan(0);
 	}
 	
 	@Test
 	public void testUpdate() {
-		// ADD A NEW CLIENT
-		Client oldClient = new Client();
-		oldClient.setIdNumber((long) 111);
-		oldClient.setFirstName("111");
-		oldClient.setLastName("111");
-		oldClient.setMobileNumber("1111111111");
-		oldClient.setPhysicalAddress("111");
-		
-		Client savedClient = null;
-		try {
-			savedClient = this.clientService.save(oldClient);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
 		
 		// UPDATE HIM
 		Client newClient = new Client();
-		newClient.setIdNumber((long) 222);
+		newClient.setIdNumber((long) Long.parseLong("9401044800085"));
 		newClient.setFirstName("222");
 		newClient.setLastName("222");
 		newClient.setMobileNumber("2222222222");
@@ -78,14 +61,14 @@ class RangerClientProjectApplicationTests {
 		
 		Client updatedClient = null;
 		try {
-			updatedClient = this.clientService.update(newClient, savedClient.getIdNumber());
+			updatedClient = this.clientService.update(newClient, Long.parseLong("2001014800086"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		// check if it the global collection just have one element
 		System.out.println(this.clientService.getClientList().values().size());
-		assertThat(this.clientService.getClientList().values()).size().isEqualTo(2);
+		assertThat(this.clientService.getClientList().values()).size().isEqualTo(1);
 	}
 
 }

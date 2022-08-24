@@ -59,17 +59,14 @@ public class ClientCollection {
 	}
 
 	public Client findByIdNumber(Long idNumber) {
-		// Iterator<Entry<Long, Client>> iterator =
-		// this.clientList.entrySet().iterator();
-		// while (iterator.hasNext()) {
-		// Map.Entry<Long, Client> currentClient = (Map.Entry<Long, Client>)
-		// iterator.next();
-		// if (currentClient.getValue().getIdNumber().equals(idNumber)) {
-		// return currentClient.getValue();
-		// }
-		// }
-		// return null;
-		return this.clientList.get(idNumber);
+		Iterator<Entry<Long, Client>> iterator = this.clientList.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<Long, Client> currentClient = (Map.Entry<Long, Client>) iterator.next();
+			if (currentClient.getValue().getIdNumber().equals(idNumber)) {
+				return currentClient.getValue();
+			}
+		}
+		return null;
 	}
 
 	public Client findByMobileNumber(String mobileNumber) {
@@ -87,14 +84,14 @@ public class ClientCollection {
 		if (!this.isIdNumberValid(client)) {
 			throw new Exception("The entered ID number is not a valid one.");
 		}
-		this.areIdNumberAndPhoneNumberUnique(client);
+		this.isIdNumberUniqueWhenCreate(client);
 		this.clientList.put(client.getIdNumber(), client);
 		return client;
 	}
 
 	public Client update(Client client, Long idNumber) throws Exception {
 
-		Client clientToUpdate = this.clientList.get((Long) idNumber);
+		Client clientToUpdate = this.findByIdNumber((Long) idNumber);
 
 		if (clientToUpdate == null) {
 			throw new Exception("User with ID Number " + idNumber + " doesn't exist");
@@ -102,7 +99,7 @@ public class ClientCollection {
 			throw new Exception("The entered ID number is not a valid one.");
 		}
 
-		this.areIdNumberAndPhoneNumberUnique(client);
+		this.isIdNumberUniqueWhenUpdate(client, idNumber);
 		this.clientList.put(idNumber, client);
 		return client;
 	}
@@ -112,14 +109,23 @@ public class ClientCollection {
 	 ***************************** VALIDATORS *********************************
 	 ************************************************************************** 
 	 **/
-	public void areIdNumberAndPhoneNumberUnique(Client client) throws Exception {
+	public void isIdNumberUniqueWhenCreate(Client client) throws Exception {
 		Iterator<Entry<Long, Client>> iterator = this.clientList.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<Long, Client> currentClient = (Map.Entry<Long, Client>) iterator.next();
 			if (currentClient.getValue().getIdNumber().equals((Long) client.getIdNumber())) {
 				throw new Exception("This action cannot be performed due to unique constraint on ID Number.");
-			} else if (currentClient.getValue().getMobileNumber().equals(client.getMobileNumber())) {
-				throw new Exception("This action cannot be performed due to unique constraint on MOBILE Number.");
+			}
+		}
+	}
+
+	public void isIdNumberUniqueWhenUpdate(Client client, Long idNum) throws Exception {
+		Iterator<Entry<Long, Client>> iterator = this.clientList.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<Long, Client> currentClient = (Map.Entry<Long, Client>) iterator.next();
+			if (!currentClient.getValue().getIdNumber().equals(idNum)
+					&& currentClient.getValue().getIdNumber().equals(client.getIdNumber())) {
+				throw new Exception("This action cannot be performed due to unique constraint on ID Number.");
 			}
 		}
 	}
